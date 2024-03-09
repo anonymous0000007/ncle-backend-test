@@ -5,13 +5,13 @@ import type Status from '../enums/task-status.enum'
  * @description task interface
  */
 export default interface Task {
-  id: string
+  id: string | undefined
   title: string
   description: string
-  createdAt: string
-  updatedAt: string
   dueDate: string
   assignedTo: string
   category: string
   status: Status
+  createdAt: string | undefined
+  updatedAt: string | undefined
 }
