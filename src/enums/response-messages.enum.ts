@@ -3,7 +3,8 @@
  * @description standard messages
  */
 enum ResponseMessage {
-  E500 = 'Internal server error'
+  INTERNAL_SERVER_ERROR = 'Internal server error',
+  TIMEOUT = 'Request timeout'
 }
 
 export default ResponseMessage

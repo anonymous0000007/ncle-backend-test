@@ -5,7 +5,7 @@ import type Task from '../../interfaces/task.interface'
 import HTTPStatus from '../../enums/http-status.enum'
 import ResponseDto from '../../dtos/response.dto'
 import TaskStatus from '../../enums/task-status.enum'
-import ResponseMessage from '../../enums/messages.enum'
+import ResponseMessage from '../../enums/response-messages.enum'
 
 const logger: Logger = getLogger('task.controller.ts')
 logger.level = 'debug'
@@ -34,7 +34,7 @@ export function createTask (req: any, res: Response): void {
     res.status(HTTPStatus.OK).json(new ResponseDto(HTTPStatus.OK, { taskId: task.id }, `${task.id} task created successfully`))
   } catch (error) {
     logger.error(`req=${req.id} createTask error=${JSON.stringify(error)}`)
-    res.status(HTTPStatus.INTERNAL_SERVER_ERROR).json(new ResponseDto(HTTPStatus.INTERNAL_SERVER_ERROR, undefined, ResponseMessage.E500))
+    res.status(HTTPStatus.INTERNAL_SERVER_ERROR).json(new ResponseDto(HTTPStatus.INTERNAL_SERVER_ERROR, undefined, ResponseMessage.INTERNAL_SERVER_ERROR))
   }
 }
 
@@ -68,7 +68,7 @@ export function updateTask (req: any, res: Response): void {
     res.status(HTTPStatus.OK).json(new ResponseDto(HTTPStatus.OK, undefined, `${req?.params?.id} task updated successfully`))
   } catch (error) {
     logger.error(`req=${req.id} updateTask error=${JSON.stringify(error)}`)
-    res.status(HTTPStatus.INTERNAL_SERVER_ERROR).json(new ResponseDto(HTTPStatus.INTERNAL_SERVER_ERROR, undefined, ResponseMessage.E500))
+    res.status(HTTPStatus.INTERNAL_SERVER_ERROR).json(new ResponseDto(HTTPStatus.INTERNAL_SERVER_ERROR, undefined, ResponseMessage.INTERNAL_SERVER_ERROR))
   }
 }
 
@@ -102,7 +102,7 @@ export function deleteTask (req: any, res: Response): void {
     res.status(HTTPStatus.OK).json(new ResponseDto(HTTPStatus.OK, undefined, `${req?.params?.id} task deleted successfully`))
   } catch (error) {
     logger.error(`req=${req.id} deleteTask error=${JSON.stringify(error)}`)
-    res.status(HTTPStatus.INTERNAL_SERVER_ERROR).json(new ResponseDto(HTTPStatus.INTERNAL_SERVER_ERROR, undefined, ResponseMessage.E500))
+    res.status(HTTPStatus.INTERNAL_SERVER_ERROR).json(new ResponseDto(HTTPStatus.INTERNAL_SERVER_ERROR, undefined, ResponseMessage.INTERNAL_SERVER_ERROR))
   }
 }
 
@@ -133,7 +133,7 @@ export function getTaskById (req: any, res: Response): void {
     res.status(HTTPStatus.OK).json(new ResponseDto(HTTPStatus.OK, tasks[index], `${req?.params?.id} task retreived successfully`))
   } catch (error) {
     logger.error(`req=${req.id} getTaskById error=${JSON.stringify(error)}`)
-    res.status(HTTPStatus.INTERNAL_SERVER_ERROR).json(new ResponseDto(HTTPStatus.INTERNAL_SERVER_ERROR, undefined, ResponseMessage.E500))
+    res.status(HTTPStatus.INTERNAL_SERVER_ERROR).json(new ResponseDto(HTTPStatus.INTERNAL_SERVER_ERROR, undefined, ResponseMessage.INTERNAL_SERVER_ERROR))
   }
 }
 
@@ -172,9 +172,16 @@ export function getTasks (req: any, res: Response): void {
       return
     }
 
+    /* pagination */
+    // const offset: number = Number(req?.query?.offset)
+    // const limit: number = Number(req?.query?.limit)
+
+    // console.log(offset)
+    // console.log(limit)
+
     res.status(HTTPStatus.OK).json(new ResponseDto(HTTPStatus.OK, tasks, `${tasks.length} tasks retrieved successfully`))
   } catch (error) {
     logger.error(`req=${req.id} getTasks error=${JSON.stringify(error)}`)
-    res.status(HTTPStatus.INTERNAL_SERVER_ERROR).json(new ResponseDto(HTTPStatus.INTERNAL_SERVER_ERROR, undefined, ResponseMessage.E500))
+    res.status(HTTPStatus.INTERNAL_SERVER_ERROR).json(new ResponseDto(HTTPStatus.INTERNAL_SERVER_ERROR, undefined, ResponseMessage.INTERNAL_SERVER_ERROR))
   }
 }

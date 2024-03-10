@@ -9,6 +9,7 @@ import { v4 } from 'uuid'
 import HTTPStatus from './enums/http-status.enum'
 import ResponseDto from './dtos/response.dto'
 import v1TaskRouters from './routers/v1/tasks.router'
+import ResponseMessage from './enums/response-messages.enum'
 
 const logger: Logger = getLogger('app.ts')
 logger.level = 'debug'
@@ -71,7 +72,7 @@ app.use((req: any, res: express.Response, next: express.NextFunction): void => {
   /* request timeout */
   res.setTimeout(Number(process.env?.['API_TIMEOUT_MS']), (): void => {
     res.status(HTTPStatus.TIMEOUT).json(
-      new ResponseDto(HTTPStatus.TIMEOUT, undefined, 'Request timeout')
+      new ResponseDto(HTTPStatus.TIMEOUT, undefined, ResponseMessage.TIMEOUT)
     )
   })
 

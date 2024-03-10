@@ -3,7 +3,7 @@ import { getLogger, type Logger } from 'log4js'
 import { type ValidationResult, type Schema } from 'joi'
 import HTTPStatus from '../enums/http-status.enum'
 import ResponseDto from '../dtos/response.dto'
-import ResponseMessage from '../enums/messages.enum'
+import ResponseMessage from '../enums/response-messages.enum'
 
 const logger: Logger = getLogger('common.util.ts')
 logger.level = 'debug'
@@ -42,7 +42,7 @@ export default class CommonUtil {
         next()
       } catch (error) {
         logger.info(`req=${req.id} validateSchema error=${JSON.stringify(error)}`)
-        res.status(HTTPStatus.INTERNAL_SERVER_ERROR).json(new ResponseDto(HTTPStatus.INTERNAL_SERVER_ERROR, undefined, ResponseMessage.E500))
+        res.status(HTTPStatus.INTERNAL_SERVER_ERROR).json(new ResponseDto(HTTPStatus.INTERNAL_SERVER_ERROR, undefined, ResponseMessage.INTERNAL_SERVER_ERROR))
       }
     }
   }
