@@ -9,5 +9,9 @@
         "sourceType": "module"
     },
     "rules": {
-    }
+    },
+    "ignorePatterns": [
+        "/*",
+        "!/src"
+    ]
 }

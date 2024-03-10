@@ -4,7 +4,7 @@
   "description": "NCLE backend test",
   "main": "build/server.js",
   "scripts": {
-    "build": "npm run lint:fix && tsc -b",
+    "build": "npm run lint:fix && tsc",
     "lint": "eslint . --ext .ts",
     "lint:fix": "npm run lint -- --fix",
     "start": "npm run build && node build/server.js",
@@ -22,6 +22,7 @@
   "homepage": "http://localhost:3000",
   "license": "ISC",
   "devDependencies": {
+    "@faker-js/faker": "^8.4.1",
     "@types/bcrypt": "^5.0.2",
     "@types/compression": "^1.7.5",
     "@types/cors": "^2.8.17",
@@ -33,7 +34,7 @@
     "@types/jsonwebtoken": "^9.0.6",
     "@types/log4js": "^2.3.5",
     "@types/node": "^20.11.25",
-    "@types/nodemailer": "^6.4.14",
+    "@types/supertest": "^6.0.2",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "eslint": "^8.57.0",
     "eslint-config-standard-with-typescript": "^43.0.1",
@@ -48,20 +49,15 @@
     "typescript": "^5.4.2"
   },
   "dependencies": {
-    "bcrypt": "^5.1.1",
-    "class-validator": "^0.14.1",
     "compression": "^1.7.4",
-    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "crypto-js": "^4.2.0",
     "dotenv": "^16.4.5",
     "express": "^4.18.3",
-    "express-rate-limit": "^7.2.0",
     "helmet": "^7.1.0",
     "joi": "^17.12.2",
     "jsonwebtoken": "^9.0.2",
     "log4js": "^6.9.1",
-    "nodemailer": "^6.9.12",
     "uuidv4": "^6.2.13"
   },
   "repository": {
