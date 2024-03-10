@@ -1,6 +1,6 @@
 import express, { type Router } from 'express'
 import { createTask, updateTask, deleteTask, getTaskById, getTasks } from '../../controllers/v1/tasks.controller'
-import { CommonUtil } from '../../utils/common.util'
+import CommonUtil from '../../utils/common.util'
 import TaskSchema from '../../validations/task.validation'
 
 const router: Router = express.Router()
