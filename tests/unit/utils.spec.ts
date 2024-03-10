@@ -49,7 +49,7 @@ describe('Test2: APIs tests', (): void => {
     expect(responseDto.$message).toBe('OK')
   })
 
-  it('Test2.2: Create Task', async (): Promise<void> => {
+  it('Test2.3: Create Task', async (): Promise<void> => {
     const responseDto: ResponseDto = new ResponseDto()
     responseDto.setObjValues((await http('POST', '/api/v1/task', generateTask()) as any).body)
     expect(responseDto.$status).toBe(HTTPStatus.OK)
@@ -57,5 +57,44 @@ describe('Test2: APIs tests', (): void => {
 
     responseDto.setObjValues((await http('POST', '/api/v1/task') as any).body)
     expect(responseDto.$status).toBe(HTTPStatus.BAD_REQUEST)
+  })
+
+  it('Test2.4: Update Task', async (): Promise<void> => {
+    const responseDto: ResponseDto = new ResponseDto()
+    responseDto.setObjValues((await http('POST', '/api/v1/task', generateTask()) as any).body)
+
+    responseDto.setObjValues((await http('PUT', `/api/v1/task/${responseDto?.$body?.taskId}`, generateTask()) as any).body)
+    expect(responseDto.$status).toBe(HTTPStatus.OK)
+    expect(responseDto.$message).toContain('task updated successfully')
+
+    responseDto.setObjValues((await http('PUT', '/api/v1/task/sdsd') as any).body)
+    expect(responseDto.$status).toBe(HTTPStatus.BAD_REQUEST)
+
+    const response: any = await http('PUT', '/api/v1/task/sdsd', generateTask())
+    expect(response.status).toBe(HTTPStatus.NO_CONTENT)
+  })
+
+  it('Test2.5: Delete Task', async (): Promise<void> => {
+    const responseDto: ResponseDto = new ResponseDto()
+    responseDto.setObjValues((await http('POST', '/api/v1/task', generateTask()) as any).body)
+
+    responseDto.setObjValues((await http('DELETE', `/api/v1/task/${responseDto?.$body?.taskId}`) as any).body)
+    expect(responseDto.$status).toBe(HTTPStatus.OK)
+    expect(responseDto.$message).toContain('task deleted successfully')
+
+    const response: any = await http('DELETE', '/api/v1/task/sdsd')
+    expect(response.status).toBe(HTTPStatus.NO_CONTENT)
+  })
+
+  it('Test2.6: Get Task By ID', async (): Promise<void> => {
+    const responseDto: ResponseDto = new ResponseDto()
+    responseDto.setObjValues((await http('POST', '/api/v1/task', generateTask()) as any).body)
+
+    responseDto.setObjValues((await http('GET', `/api/v1/task/${responseDto?.$body?.taskId}`, generateTask()) as any).body)
+    expect(responseDto.$status).toBe(HTTPStatus.OK)
+    expect(responseDto.$message).toContain('task retreived successfully')
+
+    const response: any = await http('GET', '/api/v1/task/sdsd', generateTask())
+    expect(response.status).toBe(HTTPStatus.NO_CONTENT)
   })
 })
