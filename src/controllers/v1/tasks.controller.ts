@@ -27,7 +27,7 @@ export function createTask (req: any, res: Response): void {
     const task: Task = req.body
     task.id = v4()
     task.createdAt = task.updatedAt = new Date().toString()
-    task.status = task.status ?? TaskStatus.PENDING
+    task.status = TaskStatus.PENDING
     tasks.push(task)
     logger.info(`req=${req.id} createTask new taskID=${task.id}`)
 
@@ -171,8 +171,6 @@ export function getTasks (req: any, res: Response): void {
       res.status(HTTPStatus.OK).json(new ResponseDto(HTTPStatus.OK, filteredTasks, `${filteredTasks.length} tasks retrieved successfully`))
       return
     }
-
-    /* pagination */
 
     res.status(HTTPStatus.OK).json(new ResponseDto(HTTPStatus.OK, tasks, `${tasks.length} tasks retrieved successfully`))
   } catch (error) {
