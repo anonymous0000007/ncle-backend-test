@@ -37,6 +37,7 @@ export default class CommonUtil {
         if (error !== undefined) {
           const errorMessage: string = error?.details[0]?.message ?? ''
           res.status(HTTPStatus.BAD_REQUEST).json(new ResponseDto(HTTPStatus.BAD_REQUEST, undefined, errorMessage))
+          return
         }
 
         next()

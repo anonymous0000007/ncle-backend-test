@@ -61,7 +61,7 @@ export function updateTask (req: any, res: Response): void {
 
     if (!isMatched) {
       logger.info(`req=${req.id} updateTask ${req?.params?.id} task not found`)
-      res.status(HTTPStatus.NOT_FOUND).json(new ResponseDto(HTTPStatus.NOT_FOUND, undefined, `${req?.params?.id} task not found`))
+      res.status(HTTPStatus.NO_CONTENT).json(new ResponseDto(HTTPStatus.NO_CONTENT, undefined, `${req?.params?.id} task not found`))
       return
     }
 
@@ -93,7 +93,7 @@ export function deleteTask (req: any, res: Response): void {
 
     if (index === -1) {
       logger.info(`req=${req.id} deleteTask ${req?.params?.id} task not found`)
-      res.status(HTTPStatus.NOT_FOUND).json(new ResponseDto(HTTPStatus.NOT_FOUND, undefined, `${req?.params?.id} task not found`))
+      res.status(HTTPStatus.NO_CONTENT).json(new ResponseDto(HTTPStatus.NO_CONTENT, undefined, `${req?.params?.id} task not found`))
       return
     }
 
@@ -126,7 +126,7 @@ export function getTaskById (req: any, res: Response): void {
 
     if (index === -1) {
       logger.info(`req=${req.id} getTaskById ${req?.params?.id} task not found`)
-      res.status(HTTPStatus.NOT_FOUND).json(new ResponseDto(HTTPStatus.NOT_FOUND, undefined, `${req?.params?.id} task not found`))
+      res.status(HTTPStatus.NO_CONTENT).json(new ResponseDto(HTTPStatus.NO_CONTENT, undefined, `${req?.params?.id} task not found`))
       return
     }
 
