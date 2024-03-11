@@ -1,158 +1,141 @@
-import { type Response } from 'express'
 import { getLogger, type Logger } from 'log4js'
 import { v4 } from 'uuid'
 import type Task from '../../interfaces/task.interface'
 import HTTPStatus from '../../enums/http-status.enum'
 import ResponseDto from '../../dtos/response.dto'
 import TaskStatus from '../../enums/task-status.enum'
-import ResponseMessage from '../../enums/response-messages.enum'
 
 const logger: Logger = getLogger('task.controller.ts')
 logger.level = 'debug'
 
-const tasks: Task[] = []
-
 /**
- * @exports
- * @returns {void}
- * @param {any} req
- * @param {Response} res
- * @description create task API
-*/
-export function createTask (req: any, res: Response): void {
-  try {
-    logger.info(`req=${req.id} createTask`)
+ * @class TaskController
+ * @description task controller class to make it testable structure
+ */
+export default class TaskController {
+  private static readonly tasks: Task[] = []
+
+  /**
+   * @public
+   * @exports
+   * @returns {ResponseDto}
+   * @param {string} reqId
+   * @param {Task} task
+   * @description create task
+  */
+  public createTask (reqId: string, task: Task): ResponseDto {
+    logger.info(`req=${reqId} createTask`)
 
     /* task uuid, createdAt, updateAt generate for new task, if status not passed by default Pending */
-    const task: Task = req.body
     task.id = v4()
     task.createdAt = task.updatedAt = new Date().toString()
     task.status = TaskStatus.PENDING
-    tasks.push(task)
-    logger.info(`req=${req.id} createTask new taskID=${task.id}`)
+    TaskController.tasks.push(task)
+    logger.info(`req=${reqId} createTask new taskID=${task.id}`)
 
-    res.status(HTTPStatus.OK).json(new ResponseDto(HTTPStatus.OK, { taskId: task.id }, `${task.id} task created successfully`))
-  } catch (error) {
-    logger.error(`req=${req.id} createTask error=${JSON.stringify(error)}`)
-    res.status(HTTPStatus.INTERNAL_SERVER_ERROR).json(new ResponseDto(HTTPStatus.INTERNAL_SERVER_ERROR, undefined, ResponseMessage.INTERNAL_SERVER_ERROR))
+    return new ResponseDto(HTTPStatus.OK, { taskId: task.id }, `${task.id} task created successfully`)
   }
-}
 
-/**
- * @exports
- * @returns {void}
- * @param {any} req
- * @param {Response} res
- * @description update task API
- */
-export function updateTask (req: any, res: Response): void {
-  try {
-    logger.info(`req=${req.id} updateTask`)
+  /**
+   * @public
+   * @exports
+   * @returns {ResponseDto}
+   * @param {string} reqId
+   * @param {string} taskId
+   * @param {Task} updateObj
+   * @description update task
+   */
+  public updateTask (reqId: string, taskId: string, updateObj: Task): ResponseDto {
+    logger.info(`req=${reqId} updateTask`)
 
     /* update task op */
-    const updatedTask: Task = req.body
     let isMatched: boolean = false
-    for (let task of tasks) {
-      if (task.id === req?.params?.id) {
-        task = { ...task, ...updatedTask, updatedAt: new Date().toString() }
+    for (let i = 0; i < TaskController.tasks.length; ++i) {
+      if (TaskController.tasks[i]?.id === taskId) {
+        TaskController.tasks[i] = { ...TaskController.tasks[i], ...updateObj, updatedAt: new Date().toString() }
         isMatched = true
       }
     }
 
     if (!isMatched) {
-      logger.info(`req=${req.id} updateTask ${req?.params?.id} task not found`)
-      res.status(HTTPStatus.NO_CONTENT).json(new ResponseDto(HTTPStatus.NO_CONTENT, undefined, `${req?.params?.id} task not found`))
-      return
+      logger.info(`req=${reqId} updateTask ${taskId} task not found`)
+      return new ResponseDto(HTTPStatus.NO_CONTENT, undefined, `${taskId} task not found`)
     }
 
-    res.status(HTTPStatus.OK).json(new ResponseDto(HTTPStatus.OK, undefined, `${req?.params?.id} task updated successfully`))
-  } catch (error) {
-    logger.error(`req=${req.id} updateTask error=${JSON.stringify(error)}`)
-    res.status(HTTPStatus.INTERNAL_SERVER_ERROR).json(new ResponseDto(HTTPStatus.INTERNAL_SERVER_ERROR, undefined, ResponseMessage.INTERNAL_SERVER_ERROR))
+    return new ResponseDto(HTTPStatus.OK, undefined, `${taskId} task updated successfully`)
   }
-}
 
-/**
- * @exports
- * @returns {void}
- * @param {any} req
- * @param {Response} res
- * @description delete task API
- */
-export function deleteTask (req: any, res: Response): void {
-  try {
-    logger.info(`req=${req.id} deleteTask`)
+  /**
+   * @public
+   * @exports
+   * @returns {ResponseDto}
+   * @param {string} reqId
+   * @param {string} taskId
+   * @description delete task
+   */
+  public deleteTask (reqId: string, taskId: string): ResponseDto {
+    logger.info(`req=${reqId} deleteTask`)
 
     /* update task op */
     let index: number = -1
-    for (let i = 0; i < tasks.length; ++i) {
-      if (tasks[i]?.id === req?.params?.id) {
+    for (let i = 0; i < TaskController.tasks.length; ++i) {
+      if (TaskController.tasks[i]?.id === taskId) {
         index = i
       }
     }
 
     if (index === -1) {
-      logger.info(`req=${req.id} deleteTask ${req?.params?.id} task not found`)
-      res.status(HTTPStatus.NO_CONTENT).json(new ResponseDto(HTTPStatus.NO_CONTENT, undefined, `${req?.params?.id} task not found`))
-      return
+      logger.info(`req=${reqId} deleteTask ${taskId} task not found`)
+      return new ResponseDto(HTTPStatus.NO_CONTENT, undefined, `${taskId} task not found`)
     }
 
-    tasks.splice(index, 1)
+    TaskController.tasks.splice(index, 1)
 
-    res.status(HTTPStatus.OK).json(new ResponseDto(HTTPStatus.OK, undefined, `${req?.params?.id} task deleted successfully`))
-  } catch (error) {
-    logger.error(`req=${req.id} deleteTask error=${JSON.stringify(error)}`)
-    res.status(HTTPStatus.INTERNAL_SERVER_ERROR).json(new ResponseDto(HTTPStatus.INTERNAL_SERVER_ERROR, undefined, ResponseMessage.INTERNAL_SERVER_ERROR))
+    return new ResponseDto(HTTPStatus.OK, undefined, `${taskId} task deleted successfully`)
   }
-}
 
-/**
- * @exports
- * @returns {void}
- * @param {any} req
- * @param {Response} res
- * @description get task by id
- */
-export function getTaskById (req: any, res: Response): void {
-  try {
-    logger.info(`req=${req.id} getTaskById`)
+  /**
+   * @public
+   * @exports
+   * @returns {ResponseDto}
+   * @param {string} reqId
+   * @param {string} taskId
+   * @description get task by id
+   */
+  public getTaskById (reqId: string, taskId: string): ResponseDto {
+    logger.info(`req=${reqId} getTaskById`)
 
     let index: number = -1
-    for (let i = 0; i < tasks.length; ++i) {
-      if (tasks[i]?.id === req?.params?.id) {
+    for (let i = 0; i < TaskController.tasks.length; ++i) {
+      if (TaskController.tasks[i]?.id === taskId) {
         index = i
       }
     }
 
     if (index === -1) {
-      logger.info(`req=${req.id} getTaskById ${req?.params?.id} task not found`)
-      res.status(HTTPStatus.NO_CONTENT).json(new ResponseDto(HTTPStatus.NO_CONTENT, undefined, `${req?.params?.id} task not found`))
-      return
+      logger.info(`req=${reqId} getTaskById ${taskId} task not found`)
+      return new ResponseDto(HTTPStatus.NO_CONTENT, undefined, `${taskId} task not found`)
     }
 
-    res.status(HTTPStatus.OK).json(new ResponseDto(HTTPStatus.OK, tasks[index], `${req?.params?.id} task retreived successfully`))
-  } catch (error) {
-    logger.error(`req=${req.id} getTaskById error=${JSON.stringify(error)}`)
-    res.status(HTTPStatus.INTERNAL_SERVER_ERROR).json(new ResponseDto(HTTPStatus.INTERNAL_SERVER_ERROR, undefined, ResponseMessage.INTERNAL_SERVER_ERROR))
+    return new ResponseDto(HTTPStatus.OK, TaskController.tasks[index], `${taskId} task retreived successfully`)
   }
-}
 
-/**
- * @exports
- * @returns {void}
- * @param {any} req
- * @param {Response} res
- * @description get tasks
- */
-export function getTasks (req: any, res: Response): void {
-  try {
-    logger.info(`req=${req.id} getTasks queryParams=${JSON.stringify(req?.query)}`)
+  /**
+   * @public
+   * @exports
+   * @returns {ResponseDto}
+   * @param {string} reqId
+   * @param {{ assignedTo?: string, category?: string, offset?: number, limit?: number }} [queryParams={}]
+   * @param {string} [queryParams.assignedTo] - task assignedTo for filter
+   * @param {string} [queryParams.category] - task category for filter
+   * @param {number} [queryParams.offset] - pagination offset
+   * @param {number} [queryParams.limit] - pagination limit
+   * @description get tasks by (assingedTo | category | assignedTo & category | all) + pagination
+   */
+  public getTasks (reqId: string, { assignedTo, category, offset, limit }: { assignedTo?: string, category?: string, offset?: number, limit?: number } = {}): ResponseDto {
+    logger.info(`req=${reqId} getTasks assignedTo=${assignedTo} category=${category} offset=${offset} limit=${limit}`)
 
-    let filteredTasks: Task[]
-
-    /* query assignedTo, category filter */
-    const assignedTo: string | undefined = req?.query?.assignedTo
-    const category: string | undefined = req?.query?.category
+    let filteredTasks: Task[] = TaskController.tasks
 
     let filterFunction: ((task: Task) => boolean) | undefined
     if (
@@ -166,22 +149,14 @@ export function getTasks (req: any, res: Response): void {
       filterFunction = (task: Task): boolean => category === task.category
     }
 
-    if (filterFunction !== undefined) {
-      filteredTasks = tasks.filter(filterFunction)
-      res.status(HTTPStatus.OK).json(new ResponseDto(HTTPStatus.OK, filteredTasks, `${filteredTasks.length} tasks retrieved successfully`))
-      return
-    }
+    if (filterFunction !== undefined) filteredTasks = TaskController.tasks.filter(filterFunction)
 
     /* pagination */
-    // const offset: number = Number(req?.query?.offset)
-    // const limit: number = Number(req?.query?.limit)
+    if (offset !== undefined && limit !== undefined) {
+      const remainingLimit: number = filteredTasks.length - offset
+      filteredTasks = filteredTasks.splice(offset, limit < remainingLimit ? limit : remainingLimit)
+    }
 
-    // console.log(offset)
-    // console.log(limit)
-
-    res.status(HTTPStatus.OK).json(new ResponseDto(HTTPStatus.OK, tasks, `${tasks.length} tasks retrieved successfully`))
-  } catch (error) {
-    logger.error(`req=${req.id} getTasks error=${JSON.stringify(error)}`)
-    res.status(HTTPStatus.INTERNAL_SERVER_ERROR).json(new ResponseDto(HTTPStatus.INTERNAL_SERVER_ERROR, undefined, ResponseMessage.INTERNAL_SERVER_ERROR))
+    return new ResponseDto(HTTPStatus.OK, filteredTasks, `${filteredTasks.length} tasks retrieved successfully`)
   }
 }

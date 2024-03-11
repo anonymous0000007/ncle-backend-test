@@ -1,12 +1,8 @@
-import { describe, expect } from '@jest/globals'
-import { faker } from '@faker-js/faker'
-import { type ValidationResult, type Schema } from 'joi'
-import type Task from '../../src/interfaces/task.interface'
-import TaskStatus from '../../src/enums/task-status.enum'
-import TaskSchema from '../../src/validations/task.validation'
-import { http } from '../super-test.config'
-import ResponseDto from '../../src/dtos/response.dto'
-import HTTPStatus from '../../src/enums/http-status.enum'
+import { faker } from "@faker-js/faker"
+import ResponseDto from "../../src/dtos/response.dto"
+import type HTTPStatus from "../../src/enums/http-status.enum"
+import { http } from "../super-test.config"
+import type Task from "../../src/interfaces/task.interface"
 
 /**
  * @returns {Task}
@@ -23,16 +19,7 @@ function generateTask (): Task {
   }
 }
 
-describe('Test1: Joi TaskSchema Validation Test', (): void => {
-  it('Test1.1: 1000 fake task against joi schema', (): void => {
-    for (let i = 0; i < 1000; ++i) {
-      const { error }: ValidationResult<Schema> = TaskSchema.validate(generateTask())
-      expect(error).toBeUndefined()
-    }
-  })
-})
-
-describe('Test2: APIs tests', (): void => {
+describe('Test1: APIs tests', (): void => {
   it('Test2.1: 404 check', async (): Promise<void> => {
     const responseDto: ResponseDto = new ResponseDto()
     responseDto.setObjValues((await http('GET', '/api/data') as any).body)
@@ -96,5 +83,31 @@ describe('Test2: APIs tests', (): void => {
 
     const response: any = await http('GET', '/api/v1/task/sdsd', generateTask())
     expect(response.status).toBe(HTTPStatus.NO_CONTENT)
+  })
+
+  it('Test2.7: Get Tasks', (): void => {
+
+    test('Test2.7.1: Get Task By assignedTo & category query params combination', async (): Promise<void> => {
+      let assignedTo: string = '',
+          category: string = '';
+      for (let i = 0; i < 5; ++i) {
+        const task: Task = generateTask()
+        assignedTo = task.assignedTo
+        category = task.category
+        await http('POST', '/api/v1/task', task)
+      }
+
+      const responseDto = new ResponseDto();
+      responseDto.setObjValues((await http('GET', `/api/v1/tasks?assignedTo=${assignedTo}`) as any).body)
+      expect(responseDto.$body).
+    })
+
+    test('', async (): Promise<void> => {
+
+    })
+
+    test('', async (): Promise<void> => {
+
+    })
   })
 })

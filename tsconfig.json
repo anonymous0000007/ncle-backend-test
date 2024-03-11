@@ -108,5 +108,8 @@
   },
   "include": [
     "src/**/*.ts"
-  ]
+  ],
+  "jest": {
+    "preset": "ts-jest"
+  }
 }
