@@ -33,7 +33,7 @@ export default class TaskController {
     TaskController.tasks.push(task)
     logger.info(`req=${reqId} createTask new taskID=${task.id}`)
 
-    return new ResponseDto(HTTPStatus.OK, { taskId: task.id }, `${task.id} task created successfully`)
+    return new ResponseDto(HTTPStatus.OK, task, `${task.id} task created successfully`)
   }
 
   /**
@@ -42,27 +42,27 @@ export default class TaskController {
    * @returns {ResponseDto}
    * @param {string} reqId
    * @param {string} taskId
-   * @param {Task} updateObj
+   * @param {Task} updatedTask
    * @description update task
    */
-  public updateTask (reqId: string, taskId: string, updateObj: Task): ResponseDto {
+  public updateTask (reqId: string, taskId: string, updatedTask: Task): ResponseDto {
     logger.info(`req=${reqId} updateTask`)
 
     /* update task op */
-    let isMatched: boolean = false
+    let index: number = -1
     for (let i = 0; i < TaskController.tasks.length; ++i) {
       if (TaskController.tasks[i]?.id === taskId) {
-        TaskController.tasks[i] = { ...TaskController.tasks[i], ...updateObj, updatedAt: new Date().toString() }
-        isMatched = true
+        TaskController.tasks[i] = { ...TaskController.tasks[i], ...updatedTask, updatedAt: new Date().toString() }
+        index = i
       }
     }
 
-    if (!isMatched) {
+    if (index === -1) {
       logger.info(`req=${reqId} updateTask ${taskId} task not found`)
       return new ResponseDto(HTTPStatus.NO_CONTENT, undefined, `${taskId} task not found`)
     }
 
-    return new ResponseDto(HTTPStatus.OK, undefined, `${taskId} task updated successfully`)
+    return new ResponseDto(HTTPStatus.OK, TaskController.tasks[index], `${taskId} task updated successfully`)
   }
 
   /**
